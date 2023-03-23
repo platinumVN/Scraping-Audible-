@@ -47,5 +47,5 @@ class MongodbPipeline:
         logging.warning('MongoClient Closed - Pipeline')
     def process_item(self, item, spider):
         logging.warning('Add item - MongoDB Pipeline')
-        self.db[self.collection_name].insert_one(item)
+        self.db[self.collection_name].insert_one(dict(item))
         return item

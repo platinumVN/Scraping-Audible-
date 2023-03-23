@@ -1,5 +1,5 @@
 import scrapy
-
+from ..items import ScrapingAudibleItem
 
 class AudibleSpider(scrapy.Spider):
     name = "audible"
@@ -16,18 +16,24 @@ class AudibleSpider(scrapy.Spider):
 
     def parse(self, response):
         product_containers = response.xpath('//div[@class="adbl-impression-container "]/div/span/ul/li')
-
+        items = ScrapingAudibleItem()
         for product in product_containers:
             book_title = product.xpath('.//h3[contains(@class, "bc-heading")]/a/text()').get()
             book_author = product.xpath('.//li[contains(@class, "authorLabel")]/span/a/text()').get()
             book_length = product.xpath('.//li[contains(@class, "runtimeLabel")]/span/text()').get()
 
-            yield {
-                'title' : book_title,
-                'author' : book_author,
-                'runtime' : book_length,
-                # 'User-Agent':response.request.headers['User-Agent']
-            }
+            items['title'] = book_title
+            items['author'] = book_author
+            items['runtime'] = book_length
+
+            # yield {
+            #     'title' : book_title,
+            #     'author' : book_author,
+            #     'runtime' : book_length,
+            #     # 'User-Agent':response.request.headers['User-Agent']
+            # }
+            
+            yield items
 
         pagination = response.xpath('//ul[contains(@class, "pagingElements")]')
         next_page_url = pagination.xpath('.//span[contains(@class, "nextButton")]/a/@href').get()
