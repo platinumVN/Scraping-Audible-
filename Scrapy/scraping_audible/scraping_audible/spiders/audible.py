@@ -11,8 +11,10 @@ class AudibleSpider(scrapy.Spider):
     }
 
     def start_requests(self):
-        yield scrapy.Request(url="https://www.audible.com/search/", callback=self.parse, 
-                       headers=self.request_custom_headers)
+        request = scrapy.Request(url="https://www.audible.com/search/", callback=self.parse, 
+                                headers=self.request_custom_headers)
+        # request.meta['proxy'] = "host:port"
+        yield request
 
     def parse(self, response):
         product_containers = response.xpath('//div[@class="adbl-impression-container "]/div/span/ul/li')
@@ -32,7 +34,7 @@ class AudibleSpider(scrapy.Spider):
             #     'runtime' : book_length,
             #     # 'User-Agent':response.request.headers['User-Agent']
             # }
-            
+
             yield items
 
         pagination = response.xpath('//ul[contains(@class, "pagingElements")]')
